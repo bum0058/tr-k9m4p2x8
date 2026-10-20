@@ -76,8 +76,8 @@ if(map)map.addControl(new maplibregl.NavigationControl(),'top-right');
 if(map)map.addControl(new maplibregl.GeolocateControl({trackUserLocation:true}),'top-right');
 let ready=false;let mks=[];const markers={};
 if(map)map.on('load',()=>{
- // 한글(name:ko)이 있으면 "한글 + 현지어(일본어)" 2줄로 병기
- const bi=['case',['all',['has','name:ko'],['!=',['get','name:ko'],['get','name']]],['format',['get','name:ko'],{},'\n',{},['get','name'],{'font-scale':0.82}],['get','name']];
+ // 한글 우선 표기: ko→en→현지어 순 fallback, 일본어는 항상 작게 병기
+ const bi=['case',['has','name:ko'],['format',['get','name:ko'],{},'\n',{},['get','name'],{'font-scale':0.8}],['has','name:en'],['format',['get','name:en'],{},'\n',{},['get','name'],{'font-scale':0.8}],['get','name']];
  map.getStyle().layers.forEach(l=>{const tf=l.layout&&l.layout['text-field'];if(l.type==='symbol'&&tf&&JSON.stringify(tf).includes('name')){try{map.setLayoutProperty(l.id,'text-field',bi);}catch(err){}}});
  map.addSource('route',{type:'geojson',data:{type:'FeatureCollection',features:[]}});
  map.addLayer({id:'route',type:'line',source:'route',layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':['get','color'],'line-width':['get','w'],'line-opacity':['get','o']}});
